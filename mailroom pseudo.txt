@@ -58,5 +58,9 @@ def letter_menu():
 	send_thank_you(donor_name, donation_amount)
 
 
+def show_donor_list():
+	print <each name in our database's all_donor_names>
+
+
 def send_thank_you(donor_name, donation_amount):
 	print <thank you letter for name and amount, stretch goal: leaderboard standings>
