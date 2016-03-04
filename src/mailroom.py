@@ -5,7 +5,7 @@ from builtins import input, open
 
 class DonorData(object):
     def __init__(self):
-       """Create empty donor database"""
+        """Create empty donor database"""
         self.table = {}
 
     def all_donor_names(self):
@@ -22,29 +22,35 @@ class DonorData(object):
         """add donation to data"""
 
 
+def make_report(donors):
+    """Print a list of donors, sorted by total historical donation amount"""
+    for donor in donors.all_donor_names():
+
+    pass
+
+
 def main():
-    global donors
     donors = DonorData()
-    while main_menu():
+    while main_menu(donors):
         pass
 
 
-def main_menu():
+def main_menu(donors):
     user_input = input("""main menu message""")
     if """user asked for report""":
-        show_report()
+        print(make_report(donors))
     elif """user asked to send a thank you""":
-        letter_menu()
+        letter_menu(donors)
     elif """user asked to quit""":
         return False
     return True
 
 
-def show_report():
+def show_donor_list(donors):
     pass
 
 
-def letter_menu():
+def letter_menu(donors):
     while True:
         user_input = input("""get donor name message""")
         if """user asked to go back""":
