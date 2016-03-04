@@ -1,14 +1,16 @@
-/bin
-/include
-/lib
-/local
+/bin/
+/include/
+/lib/
+/local/
 /pip-selfcheck.json
-/Scripts
-/.idea
+/Scripts/
+/.tox/
+/.idea/
 .#*
 *.pyc
 .cache/
 __pycache__/
+*.egg-info/
 
 # application file
 donations.db

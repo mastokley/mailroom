@@ -6,6 +6,7 @@ from tabulate import tabulate
 
 def test_foo():
     assert 1 == 1
+    assert "asdf   asfda".split() == ["asdf", "asfda"]
 
 
 def test_parse_donation_amount():
