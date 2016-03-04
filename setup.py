@@ -14,4 +14,9 @@ setup(
     extras_require={
         'test': ['pytest', 'tox']
     },
+    entry_points={
+        'console_scripts': [
+            "mailroom = mailroom:main",
+        ]
+    }
 )
