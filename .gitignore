@@ -1,6 +1,8 @@
 /bin/
+/dist/
 /include/
 /lib/
+/lib64/
 /local/
 /pip-selfcheck.json
 /Scripts/
