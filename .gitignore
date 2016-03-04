@@ -16,3 +16,5 @@ __pycache__/
 
 # application file
 donations.db
+/mailroom_chart.png
+/mailroom_flowchart.org
