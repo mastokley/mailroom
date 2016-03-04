@@ -9,3 +9,6 @@
 *.pyc
 .cache/
 __pycache__/
+
+# application file
+donations.db

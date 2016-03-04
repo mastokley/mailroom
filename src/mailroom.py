@@ -3,30 +3,48 @@ from __future__ import print_function, unicode_literals
 from builtins import input
 
 import re
+import sqlite3
 
 from tabulate import tabulate
 
 
 NUMBER_TEST = re.compile(r"^\$?(\d+(\.\d\d?)?)$")
+DB_PATH = "donations.db"
 
 
 class DonorData(object):
-    def __init__(self):
+    def __init__(self, filename=":memory:"):
         """Create empty donor database"""
-        self.table = {}
+        self.db = sqlite3.Connection(filename)
+        self.db.executescript("""
+            CREATE TABLE IF NOT EXISTS donations (
+                donor TEXT NOT NULL COLLATE NOCASE,
+                amount REAL NOT NULL
+            );
+            CREATE INDEX IF NOT EXISTS ix_donors ON donations(donor);
+        """)
 
     def all_donor_names(self):
         """Return iterator of donor names"""
-        return iter(self.table)
+        return (donor for (donor,) in self.db.execute(
+            "SELECT DISTINCT donor FROM donations"
+        ))
 
     def donor_history(self, donor_name):
         """Return list of donations or None if empty"""
-        return self.table.get(donor_name)
+        return list(amount for (amount,) in self.db.execute(
+            "SELECT amount FROM donations WHERE donor = ?",
+            (donor_name,)
+        )) or None
 
     def add_donation(self, donor_name, amount):
         """create donor if name does not exist"""
-        self.table.setdefault(donor_name, []).append(amount)
-        """add donation to data"""
+        with self.db:
+            self.db.execute(
+                "INSERT INTO donations (donor, amount) "
+                "VALUES (?, ?)",
+                (donor_name, amount)
+            )
 
 
 def make_report(donors):
@@ -138,7 +156,7 @@ DonationCorp Ltd.""".format(donor_name, donation_amount)
 
 def main():
     """Main CLI method"""
-    donors = DonorData()
+    donors = DonorData(DB_PATH)
     main_menu(donors)
 
 
