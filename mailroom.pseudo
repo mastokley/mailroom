@@ -1,0 +1,62 @@
+class DonorData:
+	def __init__(self):
+		<set up>
+	
+	def all_donor_names(self):
+		return <an iterator over stored donor names>
+	
+	def donor_history(self, donor_name):
+		return <a list of donation amounts>
+	
+	def add_donation(self, donor_name, amount):
+		<create donor if name does not exist>
+		<add donation to data>
+	
+
+def main():
+	global donors = DonorData()
+	while main_menu():
+		pass
+
+
+def main_menu():
+	user_input = input(<main menu message>)
+	if <user asked for report>:
+		show_report()
+	elif <user asked to send a thank you>:
+		letter_menu()
+	elif <user asked to quit>:
+		return False
+	return True
+
+
+def show_report():
+	pass
+	
+
+def letter_menu():
+	while True:
+		user_input = input(<get donor name message>)
+		if <user asked to go back>:
+			return
+		elif <user asked for list>:
+			show_donor_list()
+			continue
+		
+	donor_name = user_input
+	
+	while True:
+		user_input = input(<get donation amount message>)
+		if <user asked to go back>:
+			return
+		if <input was not a number>:
+			print(<not a number message>)
+	
+	donation_amount = user_input
+	
+	donors.add_donation(donor_name, donation_amount)
+	send_thank_you(donor_name, donation_amount)
+
+
+def send_thank_you(donor_name, donation_amount):
+	print <thank you letter for name and amount, stretch goal: leaderboard standings>
