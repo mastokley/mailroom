@@ -1,6 +1,7 @@
 # coding=utf-8
 from __future__ import unicode_literals
 
+import pytest
 from tabulate import tabulate
 
 
@@ -9,47 +10,72 @@ def test_foo():
     assert "asdf   asfda".split() == ["asdf", "asfda"]
 
 
-def test_parse_donation_amount():
+TEST_NUMBERS = [
+    ("", None),
+    ("asfd", None),
+    ("333333w", None),
+    ("33333333", 33333333),
+    ("3.50", 3.5),
+    ("$3.50", 3.5),
+    ("$$3.50", None),
+    ("$3.500", None),
+    ("d444", None),
+    ("nan", None),
+    ("inf", None),
+    ("-3.50", None),
+    ("$-3.50", None),
+    ("-$3.50", None),
+    (".50", None),
+    ("0.50", .5),
+    ("0", 0),
+]
+
+
+@pytest.fixture(scope="module")
+def donordata():
+    from mailroom import DonorData
+    return DonorData()
+
+
+@pytest.mark.parametrize(("string", "expected"), TEST_NUMBERS)
+def test_parse_donation_amount(string, expected):
     from mailroom import parse_donation_amount
-    assert parse_donation_amount("") is None
-    assert parse_donation_amount("asfd") is None
-    assert parse_donation_amount("333333w") is None
-    assert parse_donation_amount("33333333") == 33333333
-    assert parse_donation_amount("3.50") == 3.5
-    assert parse_donation_amount("$3.50") == 3.5
-    assert parse_donation_amount("$$3.50") is None
-    assert parse_donation_amount("$3.500") is None
-    assert parse_donation_amount("d444") is None
-    assert parse_donation_amount("nan") is None
-    assert parse_donation_amount("inf") is None
-    assert parse_donation_amount("-3.50") is None
-    assert parse_donation_amount("$-3.50") is None
-    assert parse_donation_amount("-$3.50") is None
-    assert parse_donation_amount(".50") is None
-    assert parse_donation_amount("0.50") == .5
-    assert parse_donation_amount("0") == 0
+    if expected is None:
+        assert parse_donation_amount(string) is None
+    else:
+        assert parse_donation_amount(string) == expected
 
 
-def test_donor_table_functionality():
-    import mailroom
-    dd = mailroom.DonorData()
+TEST_DONATIONS = [
+    (
+        ("John Smith", 50),
+        {"John Smith"},
+        {"John Smith": [50], "Sally Smith": None}
+    ),
+    (
+        ("John Smith", 500),
+        {"John Smith"},
+        {"John Smith": [50, 500], "Sally Smith": None}
+    ),
+    (
+        ("Sally Smith", 500),
+        {"John Smith", "Sally Smith"},
+        {"John Smith": [50, 500], "Sally Smith": [500]}
+    )
+]
 
-    dd.add_donation("John Smith", 50)
-    assert set(dd.all_donor_names()) == {"John Smith"}
-    assert dd.donor_history("John Smith") == [50]
-    assert dd.donor_history("Sally Smith") is None
 
-    dd.add_donation("John Smith", 500)
-    assert set(dd.all_donor_names()) == {"John Smith"}
-    assert dd.donor_history("John Smith") == [50, 500]
-    assert dd.donor_history("Sally Smith") is None
+@pytest.mark.parametrize(("add", "expected_names", "expected_history"), TEST_DONATIONS)
+def test_donor_table_functionality(donordata, add, expected_names, expected_history):
+    donordata.add_donation(*add)
+    assert set(donordata.all_donor_names()) == expected_names
+    for name, history in expected_history.items():
+        assert donordata.donor_history(name) == history
 
-    dd.add_donation("Sally Smith", 500)
-    assert set(dd.all_donor_names()) == {"John Smith", "Sally Smith"}
-    assert dd.donor_history("John Smith") == [50, 500]
-    assert dd.donor_history("Sally Smith") == [500]
 
-    return dd
+TEST_LISTS = [
+
+]
 
 
 def test_make_donor_list():
